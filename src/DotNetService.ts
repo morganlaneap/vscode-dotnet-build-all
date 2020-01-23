@@ -60,7 +60,7 @@ export class DotNetService {
                     totalBuildsCompleted++;
                     if (totalBuildsCompleted == results.length) {
                       vscode.window.showInformationMessage(
-                        "All projects built successfully."
+                        `Total of ${totalBuildsCompleted} projects built successfully.`
                       );
                     }
                   }
