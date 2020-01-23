@@ -3,6 +3,12 @@
   "displayName": ".NET Build and Test All",
   "description": "Build and test all .NET projects in your open folder/workspace.",
   "version": "0.0.1",
+  "author": "Morgan Lane",
+  "publisher": "MorganLane",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/morganlaneap/vscode-dotnet-build-all.git"
+  },
   "engines": {
     "vscode": "^1.41.0"
   },
