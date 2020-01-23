@@ -1,7 +1,10 @@
 import * as vscode from "vscode";
-import dotnetBuildAll from "./commands/dotnetBuildAll";
+import { DotNetService } from "./DotNetService";
+import { LoggingService } from "./LoggingService";
 
 export function activate(context: vscode.ExtensionContext) {
+  const loggingService = new LoggingService();
+
   let dotnetBuildTestAllDisposable = vscode.commands.registerCommand(
     "extension.dotnetBuildTestAll",
     () => {
@@ -13,7 +16,9 @@ export function activate(context: vscode.ExtensionContext) {
   let dotnetBuildAllDisposable = vscode.commands.registerCommand(
     "extension.dotnetBuildAll",
     () => {
-      dotnetBuildAll();
+      loggingService.logInfo("Starting 'Build All' command");
+
+      new DotNetService(loggingService).BuildAll();
       vscode.window.showInformationMessage(
         "Running build all on current folder/workspace..."
       );
