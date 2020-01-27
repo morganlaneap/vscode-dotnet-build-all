@@ -18,7 +18,8 @@
   "activationEvents": [
     "onCommand:extension.dotnetBuildTestAll",
     "onCommand:extension.dotnetBuildAll",
-    "onCommand:extension.dotnetRestoreAll"
+    "onCommand:extension.dotnetRestoreAll",
+    "onCommand:extension.dotnetTestAll"
   ],
   "main": "./out/extension.js",
   "contributes": {

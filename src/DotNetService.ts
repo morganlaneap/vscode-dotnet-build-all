@@ -6,24 +6,28 @@ import Mutex from "./Mutex";
 
 enum DotNetCommand {
   Build = "build",
-  Restore = "restore"
+  Restore = "restore",
+  Test = "test"
 }
 
 interface IDotNetProcess {
   command: DotNetCommand;
   keywordPastTense: string;
   keywordPresentTense: string;
+  fileNameFilter: string;
 }
 
 class BuildProcess implements IDotNetProcess {
   keywordPastTense: string;
   keywordPresentTense: string;
   command: DotNetCommand;
+  fileNameFilter: string;
 
   constructor() {
     this.command = DotNetCommand.Build;
     this.keywordPresentTense = "Build";
     this.keywordPastTense = "Built";
+    this.fileNameFilter = "";
   }
 }
 
@@ -31,11 +35,27 @@ class RestoreProcess implements IDotNetProcess {
   keywordPastTense: string;
   keywordPresentTense: string;
   command: DotNetCommand;
+  fileNameFilter: string;
 
   constructor() {
     this.command = DotNetCommand.Restore;
     this.keywordPresentTense = "Restore";
     this.keywordPastTense = "Restored";
+    this.fileNameFilter = "";
+  }
+}
+
+class TestProcess implements IDotNetProcess {
+  keywordPastTense: string;
+  keywordPresentTense: string;
+  command: DotNetCommand;
+  fileNameFilter: string;
+
+  constructor() {
+    this.command = DotNetCommand.Test;
+    this.keywordPresentTense = "Test";
+    this.keywordPastTense = "Tested";
+    this.fileNameFilter = "Test";
   }
 }
 
@@ -59,6 +79,7 @@ export class DotNetService {
       currentPath.forEach((folder: vscode.WorkspaceFolder) => {
         fileService.findAllCsProjFiles(
           folder.uri.fsPath,
+          process.fileNameFilter,
           (results: string[]) => {
             let totalBuildsCompleted: number = 0;
             let errorState: boolean = false;
@@ -108,5 +129,9 @@ export class DotNetService {
 
   public RestoreAll(): void {
     this.DotNetLogic(new RestoreProcess());
+  }
+
+  public TestAll(): void {
+    this.DotNetLogic(new TestProcess());
   }
 }

@@ -8,8 +8,14 @@ export function activate(context: vscode.ExtensionContext) {
   let dotnetBuildTestAllDisposable = vscode.commands.registerCommand(
     "extension.dotnetBuildTestAll",
     () => {
-      // TODO: implement this
-      vscode.window.showInformationMessage("This isn't implemented yet!");
+      loggingService.logInfo("Starting 'Build and Test All' command");
+
+      new DotNetService(loggingService).BuildAll();
+      new DotNetService(loggingService).TestAll();
+
+      vscode.window.showInformationMessage(
+        "Running build/test all on current folder/workspace..."
+      );
     }
   );
 
@@ -37,9 +43,22 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
+  let dotnetTestAllDisposable = vscode.commands.registerCommand(
+    "extension.dotnetTestAll",
+    () => {
+      loggingService.logInfo("Starting 'Test All' command");
+
+      new DotNetService(loggingService).TestAll();
+      vscode.window.showInformationMessage(
+        "Running test all on current folder/workspace..."
+      );
+    }
+  );
+
   context.subscriptions.push(dotnetBuildTestAllDisposable);
   context.subscriptions.push(dotnetBuildAllDisposable);
   context.subscriptions.push(dotnetRestoreAllDisposable);
+  context.subscriptions.push(dotnetTestAllDisposable);
 }
 
 export function deactivate() {}

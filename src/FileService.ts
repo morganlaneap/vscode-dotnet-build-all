@@ -28,9 +28,19 @@ function walkDirectory(dir: string, done: Function) {
 }
 
 export class FileService {
-  public findAllCsProjFiles(path: string, done: Function): void {
+  public findAllCsProjFiles(
+    path: string,
+    filter: string,
+    done: Function
+  ): void {
     walkDirectory(path, (err: Error, results: string[]) => {
-      done(results.filter(f => f.endsWith(".csproj")));
+      let fileMatches = results.filter(f => f.endsWith(".csproj"));
+      if (filter !== "") {
+        fileMatches = fileMatches.filter(
+          f => f.split("/")[f.split("/").length - 1].indexOf(filter) > -1
+        );
+      }
+      done(fileMatches);
     });
   }
 }
