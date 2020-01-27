@@ -4,6 +4,41 @@ import { FileService } from "./FileService";
 import { LoggingService } from "./LoggingService";
 import Mutex from "./Mutex";
 
+enum DotNetCommand {
+  Build = "build",
+  Restore = "restore"
+}
+
+interface IDotNetProcess {
+  command: DotNetCommand;
+  keywordPastTense: string;
+  keywordPresentTense: string;
+}
+
+class BuildProcess implements IDotNetProcess {
+  keywordPastTense: string;
+  keywordPresentTense: string;
+  command: DotNetCommand;
+
+  constructor() {
+    this.command = DotNetCommand.Build;
+    this.keywordPresentTense = "Build";
+    this.keywordPastTense = "Built";
+  }
+}
+
+class RestoreProcess implements IDotNetProcess {
+  keywordPastTense: string;
+  keywordPresentTense: string;
+  command: DotNetCommand;
+
+  constructor() {
+    this.command = DotNetCommand.Restore;
+    this.keywordPresentTense = "Restore";
+    this.keywordPastTense = "Restored";
+  }
+}
+
 export class DotNetService {
   mutex: Mutex;
   loggingService: LoggingService;
@@ -13,7 +48,7 @@ export class DotNetService {
     this.loggingService = loggingService;
   }
 
-  public BuildAll(): void {
+  private DotNetLogic(process: IDotNetProcess): void {
     const fileService = new FileService();
     let buildProcess;
 
@@ -27,40 +62,32 @@ export class DotNetService {
           (results: string[]) => {
             let totalBuildsCompleted: number = 0;
             let errorState: boolean = false;
-
             results.forEach(async (file: string) => {
               const unlock: any = await this.mutex.lock();
-
               if (!errorState) {
                 this.loggingService.logInfo(`Building project file ${file}`);
-
-                buildProcess = spawn("dotnet", ["build", file]);
-
+                buildProcess = spawn("dotnet", [process.command, file]);
                 buildProcess.stdout.on("data", (data: any) => {
                   this.loggingService.logInfo(`${data}`);
                 });
-
                 buildProcess.stderr.on("data", (data: any) => {
                   this.loggingService.logError(`${data}`);
                 });
-
                 buildProcess.on("close", (code: any) => {
                   unlock();
-
                   this.loggingService.logInfo(
-                    `Build process exited with code ${code}`
+                    `${process.keywordPresentTense} process exited with code ${code}`
                   );
-
                   if (code !== 0) {
                     vscode.window.showErrorMessage(
-                      `Build for ${file} failed with code ${code}`
+                      `${process.keywordPresentTense} for ${file} failed with code ${code}`
                     );
                     errorState = true;
                   } else {
                     totalBuildsCompleted++;
                     if (totalBuildsCompleted == results.length) {
                       vscode.window.showInformationMessage(
-                        `Total of ${totalBuildsCompleted} projects built successfully.`
+                        `Total of ${totalBuildsCompleted} projects ${process.keywordPastTense.toLowerCase()} successfully.`
                       );
                     }
                   }
@@ -73,5 +100,13 @@ export class DotNetService {
         );
       });
     }
+  }
+
+  public BuildAll(): void {
+    this.DotNetLogic(new BuildProcess());
+  }
+
+  public RestoreAll(): void {
+    this.DotNetLogic(new RestoreProcess());
   }
 }

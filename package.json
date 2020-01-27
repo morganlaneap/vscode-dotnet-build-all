@@ -2,7 +2,7 @@
   "name": "dotnet-build-test-all",
   "displayName": ".NET Build and Test All",
   "description": "Build and test all .NET projects in your open folder/workspace.",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "Morgan Lane",
   "publisher": "MorganLane",
   "repository": {
@@ -17,7 +17,8 @@
   ],
   "activationEvents": [
     "onCommand:extension.dotnetBuildTestAll",
-    "onCommand:extension.dotnetBuildAll"
+    "onCommand:extension.dotnetBuildAll",
+    "onCommand:extension.dotnetRestoreAll"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -29,6 +30,14 @@
       {
         "command": "extension.dotnetBuildAll",
         "title": ".NET: Build All"
+      },
+      {
+        "command": "extension.dotnetTestAll",
+        "title": ".NET: Test All"
+      },
+      {
+        "command": "extension.dotnetRestoreAll",
+        "title": ".NET: Restore All"
       }
     ]
   },

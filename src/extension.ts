@@ -25,8 +25,21 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
+  let dotnetRestoreAllDisposable = vscode.commands.registerCommand(
+    "extension.dotnetRestoreAll",
+    () => {
+      loggingService.logInfo("Starting 'Restore All' command");
+
+      new DotNetService(loggingService).RestoreAll();
+      vscode.window.showInformationMessage(
+        "Running restore all on current folder/workspace..."
+      );
+    }
+  );
+
   context.subscriptions.push(dotnetBuildTestAllDisposable);
   context.subscriptions.push(dotnetBuildAllDisposable);
+  context.subscriptions.push(dotnetRestoreAllDisposable);
 }
 
 export function deactivate() {}
